@@ -9,6 +9,7 @@ import { LoadChart } from "@/components/charts/load-chart";
 import { SleepChart } from "@/components/charts/sleep-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { CometCard } from "@/components/ui/comet-card";
 
 export default async function AdminOverviewPage() {
   const supabase = await createClient();
@@ -47,31 +48,37 @@ export default async function AdminOverviewPage() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <Card className="rounded-3xl">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Active players
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="text-3xl font-bold">{players.length}</CardContent>
-        </Card>
-        <Card className="rounded-3xl">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Entries today
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="text-3xl font-bold">{entriesToday}</CardContent>
-        </Card>
-        <Link href="/admin/users" className="block">
-          <Card className="h-full rounded-3xl border-2 transition-colors hover:border-primary">
+        <CometCard>
+          <Card className="rounded-3xl">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
-                Pending approvals
+                Active players
               </CardTitle>
             </CardHeader>
-            <CardContent className="text-3xl font-bold">{pending.length}</CardContent>
+            <CardContent className="text-3xl font-bold">{players.length}</CardContent>
           </Card>
+        </CometCard>
+        <CometCard>
+          <Card className="rounded-3xl">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Entries today
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="text-3xl font-bold">{entriesToday}</CardContent>
+          </Card>
+        </CometCard>
+        <Link href="/admin/users" className="block">
+          <CometCard>
+            <Card className="h-full rounded-3xl border-2 transition-colors hover:border-primary">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  Pending approvals
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="text-3xl font-bold">{pending.length}</CardContent>
+            </Card>
+          </CometCard>
         </Link>
       </div>
 

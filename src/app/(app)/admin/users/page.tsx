@@ -1,12 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { listAllProfiles, listGuardianLinks } from "@/lib/services/userService";
-import {
-  approveUserAction,
-  changeRoleAction,
-  deactivateUserAction,
-  linkGuardianAction,
-  unlinkGuardianAction,
-} from "@/lib/actions/admin-actions";
+import { approveUserAction, linkGuardianAction, unlinkGuardianAction } from "@/lib/actions/admin-actions";
 import { assignableRoles } from "@/lib/schemas/user";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -18,14 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { UserTable } from "@/components/admin/user-table";
 
 const roleLabels: Record<string, string> = {
   head_admin: "Head Admin",
@@ -107,66 +94,7 @@ export default async function AdminUsersPage() {
           <CardTitle className="text-base">All users</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead />
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {profiles.map((p) => (
-                  <TableRow key={p.id}>
-                    <TableCell>
-                      <p className="font-medium">{p.full_name ?? "Unnamed"}</p>
-                      <p className="text-xs text-muted-foreground">{p.email}</p>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={p.status === "active" ? "default" : "secondary"}>
-                        {p.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell colSpan={2}>
-                      {p.status === "active" ? (
-                        <div className="flex flex-wrap items-center gap-2">
-                          <form action={changeRoleAction} className="flex items-center gap-2">
-                            <input type="hidden" name="userId" value={p.id} />
-                            <Select name="role" defaultValue={p.role}>
-                              <SelectTrigger className="w-36">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {assignableRoles.map((role) => (
-                                  <SelectItem key={role} value={role}>
-                                    {roleLabels[role]}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <Button type="submit" size="sm" variant="secondary">
-                              Update
-                            </Button>
-                          </form>
-                          {p.id !== currentUser?.id && (
-                            <form action={deactivateUserAction.bind(null, p.id)}>
-                              <Button type="submit" size="sm" variant="ghost">
-                                Deactivate
-                              </Button>
-                            </form>
-                          )}
-                        </div>
-                      ) : (
-                        <span className="text-sm text-muted-foreground">Awaiting approval</span>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+          <UserTable profiles={profiles} currentUserId={currentUser?.id} />
         </CardContent>
       </Card>
 

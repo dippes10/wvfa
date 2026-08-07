@@ -12,6 +12,7 @@ import { SleepChart } from "@/components/charts/sleep-chart";
 import { PlayerSceneLoader } from "@/components/scenes/player-scene-loader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { CometCard } from "@/components/ui/comet-card";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -61,34 +62,38 @@ export default async function DashboardPage() {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Link href="/dashboard/load" className="block">
-          <Card className="h-full rounded-3xl border-2 transition-colors hover:border-primary">
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between text-base">
-                <span>🏃 Training Load</span>
-                <span className="text-xs font-normal text-muted-foreground">
-                  {loggedLoadToday ? "✅ Logged today" : "Not logged yet"}
-                </span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">Tap to log a session →</p>
-            </CardContent>
-          </Card>
+          <CometCard className="h-full">
+            <Card className="h-full rounded-3xl border-2 transition-colors hover:border-primary">
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between text-base">
+                  <span>🏃 Training Load</span>
+                  <span className="text-xs font-normal text-muted-foreground">
+                    {loggedLoadToday ? "✅ Logged today" : "Not logged yet"}
+                  </span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">Tap to log a session →</p>
+              </CardContent>
+            </Card>
+          </CometCard>
         </Link>
         <Link href="/dashboard/sleep" className="block">
-          <Card className="h-full rounded-3xl border-2 transition-colors hover:border-primary">
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between text-base">
-                <span>😴 Sleep</span>
-                <span className="text-xs font-normal text-muted-foreground">
-                  {loggedSleepToday ? "✅ Logged today" : "Not logged yet"}
-                </span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">Tap to log last night →</p>
-            </CardContent>
-          </Card>
+          <CometCard className="h-full">
+            <Card className="h-full rounded-3xl border-2 transition-colors hover:border-primary">
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between text-base">
+                  <span>😴 Sleep</span>
+                  <span className="text-xs font-normal text-muted-foreground">
+                    {loggedSleepToday ? "✅ Logged today" : "Not logged yet"}
+                  </span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">Tap to log last night →</p>
+              </CardContent>
+            </Card>
+          </CometCard>
         </Link>
       </div>
 

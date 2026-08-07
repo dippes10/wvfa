@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SignOutButton } from "@/components/auth/sign-out-button";
+import { ThemeToggle } from "@/components/fx/theme-toggle";
 import type { UserRole } from "@/lib/supabase/database.types";
 
 const NAV_BY_ROLE: Record<UserRole, { href: string; label: string }[]> = {
@@ -46,6 +47,7 @@ export function AppNav({ role, fullName }: { role: UserRole; fullName: string | 
           >
             {fullName ?? "Profile"}
           </Link>
+          <ThemeToggle />
           <SignOutButton />
         </div>
       </div>
