@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Activity, BarChart3, MoonStar } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { CometCard } from "@/components/ui/comet-card";
 import { LayoutTextFlip } from "@/components/ui/layout-text-flip";
@@ -7,6 +8,7 @@ import { SquigglyText } from "@/components/ui/squiggly-text";
 import { ThemeToggle } from "@/components/fx/theme-toggle";
 import { FlowingTagline } from "@/components/fx/flowing-tagline";
 import { FeatureShowcase } from "@/components/fx/feature-showcase";
+import { HeroGraphic } from "@/components/fx/hero-graphic";
 import { LandingGlobeLoader } from "@/components/scenes/landing-globe-loader";
 
 const FEATURES = [
@@ -30,37 +32,43 @@ const FEATURES = [
 export default function HomePage() {
   return (
     <main className="flex min-h-screen flex-col overflow-x-hidden">
-      <header className="flex items-center justify-between p-4 sm:p-6">
-        <div className="flex items-center gap-2 font-bold">
-          <span className="flex size-8 items-center justify-center rounded-full bg-primary text-lg">
-            ⚽
-          </span>
-          <span>WVFA</span>
-        </div>
-        <div className="flex items-center gap-3">
-          <Link href="/login" className="text-sm font-medium text-muted-foreground hover:text-foreground">
-            Sign in
-          </Link>
-          <ThemeToggle />
-        </div>
-      </header>
+      <section className="relative isolate overflow-hidden bg-[oklch(0.12_0.006_90)]">
+        <HeroGraphic />
 
-      <section className="flex flex-col items-center gap-6 px-6 pt-8 pb-16 text-center sm:pt-16">
-        <div className="flex flex-col items-center gap-3">
+        <header className="relative z-10 flex items-center justify-between p-4 sm:p-6">
+          <div className="flex items-center gap-2 font-bold text-white">
+            <span className="flex size-8 items-center justify-center rounded-full bg-metallic-gold text-lg">
+              ⚽
+            </span>
+            <span>WVFA</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <Link href="/login" className="text-sm font-medium text-white/70 hover:text-white">
+              Sign in
+            </Link>
+            <ThemeToggle />
+          </div>
+        </header>
+
+        <div className="relative z-10 flex flex-col items-center gap-6 px-6 pt-6 pb-20 text-center text-white sm:pt-12 sm:pb-28">
           <LayoutTextFlip text="Track your" words={["Training Load", "Sleep", "Recovery", "Progress"]} />
+          <h1 className="max-w-3xl text-4xl font-extrabold tracking-tight text-balance text-white sm:text-6xl">
+            <span className="text-metallic-gold">Western Victoria</span> Football{" "}
+            <SquigglyText>Academy</SquigglyText>
+          </h1>
+          <p className="max-w-md text-lg text-white/70">
+            Stay injury-free and see your progress — built for WVFA players, parents, and admins.
+          </p>
+          <Link
+            href="/login"
+            className={cn(
+              buttonVariants({ size: "lg" }),
+              "shine-sweep bg-metallic-gold rounded-full border-0 px-8 text-base font-semibold shadow-lg shadow-black/40",
+            )}
+          >
+            Get started
+          </Link>
         </div>
-        <h1 className="max-w-2xl text-3xl font-extrabold tracking-tight text-balance sm:text-5xl">
-          <SquigglyText className="text-primary">Western Victoria</SquigglyText> Football Academy
-        </h1>
-        <p className="max-w-md text-lg text-muted-foreground">
-          Stay injury-free and see your progress — built for WVFA players, parents, and admins.
-        </p>
-        <Link
-          href="/login"
-          className={buttonVariants({ size: "lg", className: "rounded-full px-8 text-base" })}
-        >
-          Get started
-        </Link>
       </section>
 
       <FlowingTagline />

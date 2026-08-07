@@ -3,7 +3,7 @@
 import { Globe3D, type GlobeMarker } from "@/components/ui/3d-globe";
 
 const MARKER_DOT_SVG =
-  '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><circle cx="12" cy="12" r="10" fill="#22a35a" stroke="#ffffff" stroke-width="2"/></svg>';
+  '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><circle cx="12" cy="12" r="10" fill="#d4af37" stroke="#ffffff" stroke-width="2"/></svg>';
 const MARKER_SRC = `data:image/svg+xml,${encodeURIComponent(MARKER_DOT_SVG)}`;
 
 const WVFA_TOWNS: GlobeMarker[] = [
@@ -23,7 +23,7 @@ export function LandingGlobe() {
       config={{
         radius: 2,
         showAtmosphere: true,
-        atmosphereColor: "#22a35a",
+        atmosphereColor: "#d4af37",
         atmosphereIntensity: 0.45,
         autoRotateSpeed: 0.6,
         enableZoom: false,
