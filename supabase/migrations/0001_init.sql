@@ -122,8 +122,12 @@ as $$
   );
 $$;
 
--- Prevent players/parents from self-promoting via a direct profile update;
--- only an admin-driven update may change role or status.
+-- Prevent players/parents from self-promoting via a direct profile update
+-- made through the app; only an admin-driven update may change role or
+-- status there. Direct SQL/dashboard access (auth.uid() is null — no app
+-- session involved) is left unguarded: it already requires full database
+-- credentials, which is a superset of admin trust, and this is also how the
+-- very first head_admin gets bootstrapped (see SETUP.md).
 create or replace function public.protect_profile_privileged_fields()
 returns trigger
 language plpgsql
@@ -131,7 +135,7 @@ security definer
 set search_path = public
 as $$
 begin
-  if not public.is_admin() then
+  if auth.uid() is not null and not public.is_admin() then
     new.role := old.role;
     new.status := old.status;
   end if;
