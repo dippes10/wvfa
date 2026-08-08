@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { SignOutButton } from "@/components/auth/sign-out-button";
 import { ThemeToggle } from "@/components/fx/theme-toggle";
+import { BrandMark } from "@/components/fx/brand-mark";
 import type { UserRole } from "@/lib/supabase/database.types";
 
 const NAV_BY_ROLE: Record<UserRole, { href: string; label: string }[]> = {
@@ -24,9 +25,7 @@ export function AppNav({ role, fullName }: { role: UserRole; fullName: string | 
     <header className="sticky top-0 z-10 border-b bg-background/90 backdrop-blur">
       <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 p-4">
         <Link href={links[0]?.href ?? "/"} className="flex shrink-0 items-center gap-2 font-bold">
-          <span className="flex size-8 items-center justify-center rounded-full bg-primary text-lg">
-            ⚽
-          </span>
+          <BrandMark className="size-8" iconClassName="size-4" />
           <span className="hidden sm:inline">WVFA</span>
         </Link>
         <nav className="flex flex-1 items-center gap-1 overflow-x-auto">

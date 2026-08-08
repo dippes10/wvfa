@@ -10,6 +10,7 @@ import { listLoadEntries, type LoadEntry } from "@/lib/services/loadService";
 import { listSleepEntries, type SleepEntry } from "@/lib/services/sleepService";
 import { getSettings } from "@/lib/services/settingsService";
 import { computeLoadRisk } from "@/lib/analysis/load-flags";
+import { Users } from "lucide-react";
 import { LoadChart } from "@/components/charts/load-chart";
 import { SleepChart } from "@/components/charts/sleep-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -85,7 +86,10 @@ export default async function ParentPage() {
   return (
     <div className="mx-auto max-w-3xl space-y-6 p-4 pb-24 sm:p-6">
       <div>
-        <h1 className="text-2xl font-bold">👨‍👩‍👧 Your Children</h1>
+        <h1 className="flex items-center gap-2 text-2xl font-bold">
+          <Users className="size-6 text-primary" />
+          Your Children
+        </h1>
         <p className="text-muted-foreground">
           A read-only view of training load and sleep for your linked players.
         </p>

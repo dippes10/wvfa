@@ -5,6 +5,7 @@ import { motion } from "motion/react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { GoogleSignInButton } from "@/components/auth/google-sign-in-button";
 import { ThemeToggle } from "@/components/fx/theme-toggle";
+import { BrandMark } from "@/components/fx/brand-mark";
 
 export default function LoginPage() {
   return (
@@ -18,9 +19,7 @@ export default function LoginPage() {
       >
         <Card className="rounded-3xl border-2 shadow-lg">
           <CardHeader className="items-center text-center">
-            <div className="mb-2 flex size-16 items-center justify-center rounded-full bg-primary text-3xl">
-              ⚽
-            </div>
+            <BrandMark className="mb-2 size-16" iconClassName="size-8" />
             <CardTitle className="text-2xl">Welcome to WVFA</CardTitle>
             <CardDescription>
               Sign in to log your training load and sleep, and track your progress.

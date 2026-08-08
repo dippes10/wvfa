@@ -9,6 +9,7 @@ import { ThemeToggle } from "@/components/fx/theme-toggle";
 import { FlowingTagline } from "@/components/fx/flowing-tagline";
 import { FeatureShowcase } from "@/components/fx/feature-showcase";
 import { HeroGraphic } from "@/components/fx/hero-graphic";
+import { BrandMark } from "@/components/fx/brand-mark";
 import { LandingGlobeLoader } from "@/components/scenes/landing-globe-loader";
 
 const FEATURES = [
@@ -37,9 +38,7 @@ export default function HomePage() {
 
         <header className="relative z-10 flex items-center justify-between p-4 sm:p-6">
           <div className="flex items-center gap-2 font-bold text-white">
-            <span className="flex size-8 items-center justify-center rounded-full bg-metallic-gold text-lg">
-              ⚽
-            </span>
+            <BrandMark className="size-8" iconClassName="size-4" />
             <span>WVFA</span>
           </div>
           <div className="flex items-center gap-3">

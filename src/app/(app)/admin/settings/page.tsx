@@ -1,3 +1,4 @@
+import { Settings } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getSettings } from "@/lib/services/settingsService";
 import { SettingsForm } from "@/components/forms/settings-form";
@@ -10,7 +11,10 @@ export default async function AdminSettingsPage() {
   return (
     <div className="mx-auto max-w-2xl space-y-6 p-4 pb-24 sm:p-6">
       <div>
-        <h1 className="text-2xl font-bold">⚙️ Academy Settings</h1>
+        <h1 className="flex items-center gap-2 text-2xl font-bold">
+          <Settings className="size-6 text-primary" />
+          Academy Settings
+        </h1>
         <p className="text-muted-foreground">
           These thresholds drive the risk warnings players, parents, and this overview see.
         </p>

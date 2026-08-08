@@ -5,8 +5,10 @@ import { listLoadEntriesForPlayers, type LoadEntry } from "@/lib/services/loadSe
 import { listSleepEntriesForPlayers } from "@/lib/services/sleepService";
 import { getSettings } from "@/lib/services/settingsService";
 import { computeLoadRisk } from "@/lib/analysis/load-flags";
+import { LayoutDashboard } from "lucide-react";
 import { LoadChart } from "@/components/charts/load-chart";
 import { SleepChart } from "@/components/charts/sleep-chart";
+import { Sparkline } from "@/components/charts/sparkline";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CometCard } from "@/components/ui/comet-card";
@@ -30,6 +32,17 @@ export default async function AdminOverviewPage() {
     loadEntries.filter((e) => e.activity_date === today).length +
     sleepEntries.filter((e) => e.entry_date === today).length;
 
+  const last7Days = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - (6 - i));
+    return d.toISOString().slice(0, 10);
+  });
+  const entriesTrend = last7Days.map(
+    (date) =>
+      loadEntries.filter((e) => e.activity_date === date).length +
+      sleepEntries.filter((e) => e.entry_date === date).length,
+  );
+
   const byPlayer = new Map<string, LoadEntry[]>();
   for (const e of loadEntries) {
     const arr = byPlayer.get(e.player_id) ?? [];
@@ -43,7 +56,10 @@ export default async function AdminOverviewPage() {
   return (
     <div className="mx-auto max-w-5xl space-y-6 p-4 pb-24 sm:p-6">
       <div>
-        <h1 className="text-2xl font-bold">📊 Academy Overview</h1>
+        <h1 className="flex items-center gap-2 text-2xl font-bold">
+          <LayoutDashboard className="size-6 text-primary" />
+          Academy Overview
+        </h1>
         <p className="text-muted-foreground">Western Victoria Football Academy — live snapshot</p>
       </div>
 
@@ -65,7 +81,10 @@ export default async function AdminOverviewPage() {
                 Entries today
               </CardTitle>
             </CardHeader>
-            <CardContent className="text-3xl font-bold">{entriesToday}</CardContent>
+            <CardContent className="flex items-end justify-between gap-2">
+              <span className="text-3xl font-bold">{entriesToday}</span>
+              <Sparkline data={entriesTrend} className="h-10 w-20" />
+            </CardContent>
           </Card>
         </CometCard>
         <Link href="/admin/users" className="block">

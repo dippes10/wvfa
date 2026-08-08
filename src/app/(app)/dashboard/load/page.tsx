@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { Trash2 } from "lucide-react";
+import { Activity, Trash2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getOwnProfile } from "@/lib/services/userService";
 import { listLoadEntries } from "@/lib/services/loadService";
@@ -27,7 +27,10 @@ export default async function LoadHistoryPage() {
 
   return (
     <div className="mx-auto max-w-3xl space-y-6 p-4 pb-24 sm:p-6">
-      <h1 className="text-2xl font-bold">🏃 Training Load</h1>
+      <h1 className="flex items-center gap-2 text-2xl font-bold">
+        <Activity className="size-6 text-primary" />
+        Training Load
+      </h1>
 
       <Card className="rounded-3xl">
         <CardHeader>

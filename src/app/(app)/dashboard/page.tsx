@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { Activity, CircleCheck, Flame, MoonStar } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getOwnProfile } from "@/lib/services/userService";
 import { listLoadEntries } from "@/lib/services/loadService";
@@ -9,9 +10,9 @@ import { computeLoadRisk } from "@/lib/analysis/load-flags";
 import { computeStreak } from "@/lib/analysis/streak";
 import { LoadChart } from "@/components/charts/load-chart";
 import { SleepChart } from "@/components/charts/sleep-chart";
+import { RiskGauge } from "@/components/charts/risk-gauge";
 import { PlayerSceneLoader } from "@/components/scenes/player-scene-loader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { CometCard } from "@/components/ui/comet-card";
 
 export default async function DashboardPage() {
@@ -40,25 +41,39 @@ export default async function DashboardPage() {
     <div className="mx-auto max-w-3xl space-y-6 p-4 pb-24 sm:p-6">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Hey {firstName} 👋</h1>
-          <p className="text-muted-foreground">
-            {streak > 0 ? `🔥 ${streak}-day logging streak` : "Log today to start a streak!"}
+          <h1 className="text-2xl font-bold">Hey {firstName}</h1>
+          <p className="flex items-center gap-1.5 text-muted-foreground">
+            {streak > 0 ? (
+              <>
+                <Flame className="size-4 text-primary" />
+                {streak}-day logging streak
+              </>
+            ) : (
+              "Log today to start a streak!"
+            )}
           </p>
         </div>
         <PlayerSceneLoader celebrate={streak >= 3 && !risk.isFlagged} />
       </div>
 
-      {risk.isFlagged && (
-        <Alert variant="destructive" className="rounded-2xl">
-          <AlertTitle>Take it easy today</AlertTitle>
-          <AlertDescription>
-            {risk.overHardSessionLimit &&
-              `You've logged ${risk.hardSessionCount7d} hard sessions this week. `}
-            {risk.sequentialHardDays && "Two hard days in a row — make sure to recover. "}
-            Try to avoid another hard session until you&apos;ve had a recovery day.
-          </AlertDescription>
-        </Alert>
-      )}
+      <Card className="rounded-3xl">
+        <CardContent className="flex flex-wrap items-center justify-center gap-6 py-2 sm:justify-between">
+          <RiskGauge
+            value={risk.hardSessionCount7d}
+            max={settings.max_hard_sessions_week}
+            title="Hard sessions this week"
+            caption={risk.isFlagged ? "Take it easy — recovery needed" : "You're on track"}
+          />
+          {risk.isFlagged && (
+            <p className="max-w-xs text-center text-sm text-muted-foreground sm:text-left">
+              {risk.overHardSessionLimit &&
+                `${risk.hardSessionCount7d} hard sessions logged this week. `}
+              {risk.sequentialHardDays && "Two hard days in a row — make sure to recover. "}
+              Try to avoid another hard session until you&apos;ve had a recovery day.
+            </p>
+          )}
+        </CardContent>
+      </Card>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Link href="/dashboard/load" className="block">
@@ -66,9 +81,13 @@ export default async function DashboardPage() {
             <Card className="h-full rounded-3xl border-2 transition-colors hover:border-primary">
               <CardHeader>
                 <CardTitle className="flex items-center justify-between text-base">
-                  <span>🏃 Training Load</span>
-                  <span className="text-xs font-normal text-muted-foreground">
-                    {loggedLoadToday ? "✅ Logged today" : "Not logged yet"}
+                  <span className="flex items-center gap-2">
+                    <Activity className="size-4 text-primary" />
+                    Training Load
+                  </span>
+                  <span className="flex items-center gap-1 text-xs font-normal text-muted-foreground">
+                    {loggedLoadToday && <CircleCheck className="size-3.5 text-primary" />}
+                    {loggedLoadToday ? "Logged today" : "Not logged yet"}
                   </span>
                 </CardTitle>
               </CardHeader>
@@ -83,9 +102,13 @@ export default async function DashboardPage() {
             <Card className="h-full rounded-3xl border-2 transition-colors hover:border-primary">
               <CardHeader>
                 <CardTitle className="flex items-center justify-between text-base">
-                  <span>😴 Sleep</span>
-                  <span className="text-xs font-normal text-muted-foreground">
-                    {loggedSleepToday ? "✅ Logged today" : "Not logged yet"}
+                  <span className="flex items-center gap-2">
+                    <MoonStar className="size-4 text-primary" />
+                    Sleep
+                  </span>
+                  <span className="flex items-center gap-1 text-xs font-normal text-muted-foreground">
+                    {loggedSleepToday && <CircleCheck className="size-3.5 text-primary" />}
+                    {loggedSleepToday ? "Logged today" : "Not logged yet"}
                   </span>
                 </CardTitle>
               </CardHeader>

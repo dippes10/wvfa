@@ -1,3 +1,4 @@
+import { Users } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { listAllProfiles, listGuardianLinks } from "@/lib/services/userService";
 import { approveUserAction, linkGuardianAction, unlinkGuardianAction } from "@/lib/actions/admin-actions";
@@ -40,7 +41,10 @@ export default async function AdminUsersPage() {
   return (
     <div className="mx-auto max-w-4xl space-y-6 p-4 pb-24 sm:p-6">
       <div>
-        <h1 className="text-2xl font-bold">👥 Users</h1>
+        <h1 className="flex items-center gap-2 text-2xl font-bold">
+          <Users className="size-6 text-primary" />
+          Users
+        </h1>
         <p className="text-muted-foreground">Approve new sign-ups and manage roles & links.</p>
       </div>
 

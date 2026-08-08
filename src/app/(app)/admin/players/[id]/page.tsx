@@ -7,8 +7,8 @@ import { getSettings } from "@/lib/services/settingsService";
 import { computeLoadRisk } from "@/lib/analysis/load-flags";
 import { LoadChart } from "@/components/charts/load-chart";
 import { SleepChart } from "@/components/charts/sleep-chart";
+import { RiskGauge } from "@/components/charts/risk-gauge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default async function AdminPlayerDetailPage({
   params,
@@ -36,16 +36,23 @@ export default async function AdminPlayerDetailPage({
         <p className="text-muted-foreground">{player.email}</p>
       </div>
 
-      {risk.isFlagged && (
-        <Alert variant="destructive" className="rounded-2xl">
-          <AlertTitle>Currently flagged</AlertTitle>
-          <AlertDescription>
-            {risk.overHardSessionLimit &&
-              `${risk.hardSessionCount7d} hard sessions in the last 7 days. `}
-            {risk.sequentialHardDays && "Hard sessions on back-to-back days."}
-          </AlertDescription>
-        </Alert>
-      )}
+      <Card className="rounded-3xl">
+        <CardContent className="flex flex-wrap items-center justify-center gap-6 py-2 sm:justify-between">
+          <RiskGauge
+            value={risk.hardSessionCount7d}
+            max={settings.max_hard_sessions_week}
+            title="Hard sessions this week"
+            caption={risk.isFlagged ? "Currently flagged for recovery" : "On track"}
+          />
+          {risk.isFlagged && (
+            <p className="max-w-xs text-center text-sm text-muted-foreground sm:text-left">
+              {risk.overHardSessionLimit &&
+                `${risk.hardSessionCount7d} hard sessions in the last 7 days. `}
+              {risk.sequentialHardDays && "Hard sessions on back-to-back days."}
+            </p>
+          )}
+        </CardContent>
+      </Card>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Card className="rounded-3xl">
