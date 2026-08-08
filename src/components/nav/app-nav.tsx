@@ -2,9 +2,10 @@ import Link from "next/link";
 import { SignOutButton } from "@/components/auth/sign-out-button";
 import { ThemeToggle } from "@/components/fx/theme-toggle";
 import { BrandMark } from "@/components/fx/brand-mark";
+import { NavLinks, type NavLink } from "@/components/nav/nav-links";
 import type { UserRole } from "@/lib/supabase/database.types";
 
-const NAV_BY_ROLE: Record<UserRole, { href: string; label: string }[]> = {
+const NAV_BY_ROLE: Record<UserRole, NavLink[]> = {
   player: [
     { href: "/dashboard", label: "Home" },
     { href: "/dashboard/load", label: "Load" },
@@ -14,6 +15,7 @@ const NAV_BY_ROLE: Record<UserRole, { href: string; label: string }[]> = {
   head_admin: [
     { href: "/admin", label: "Overview" },
     { href: "/admin/users", label: "Users" },
+    { href: "/admin/testimonials", label: "Testimonials" },
     { href: "/admin/settings", label: "Settings" },
   ],
 };
@@ -28,17 +30,7 @@ export function AppNav({ role, fullName }: { role: UserRole; fullName: string | 
           <BrandMark className="size-8" iconClassName="size-4" />
           <span className="hidden sm:inline">WVFA</span>
         </Link>
-        <nav className="flex flex-1 items-center gap-1 overflow-x-auto">
-          {links.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="shrink-0 rounded-full px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
+        <NavLinks links={links} />
         <div className="flex shrink-0 items-center gap-2">
           <Link
             href="/profile"

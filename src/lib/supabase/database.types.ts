@@ -4,6 +4,7 @@
 
 export type UserRole = "head_admin" | "parent" | "player";
 export type UserStatus = "pending" | "active";
+export type TestimonialStatus = "pending" | "approved" | "rejected";
 
 export interface Database {
   public: {
@@ -97,12 +98,39 @@ export interface Database {
         Update: Partial<Database["public"]["Tables"]["academy_settings"]["Row"]>;
         Relationships: [];
       };
+      testimonials: {
+        Row: {
+          id: string;
+          author_id: string;
+          author_name: string;
+          designation: string;
+          quote: string;
+          status: TestimonialStatus;
+          reviewed_by: string | null;
+          reviewed_at: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          author_id: string;
+          author_name: string;
+          designation: string;
+          quote: string;
+          status?: TestimonialStatus;
+          reviewed_by?: string | null;
+          reviewed_at?: string | null;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["testimonials"]["Insert"]>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
     Enums: {
       user_role: UserRole;
       user_status: UserStatus;
+      testimonial_status: TestimonialStatus;
     };
   };
 }
