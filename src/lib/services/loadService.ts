@@ -11,13 +11,20 @@ function isoDateDaysAgo(days: number): string {
   return d.toISOString().slice(0, 10);
 }
 
-export async function createLoadEntry(supabase: Client, playerId: string, input: LoadEntryInput) {
+export async function createLoadEntry(
+  supabase: Client,
+  playerId: string,
+  loggedBy: string,
+  input: LoadEntryInput,
+) {
   const { error } = await supabase.from("load_entries").insert({
     player_id: playerId,
     activity_date: input.activityDate,
     description: input.description,
     duration_minutes: input.durationMinutes,
     rpe: input.rpe,
+    notes: input.notes || null,
+    logged_by: loggedBy,
   });
   if (error) throw error;
 }
@@ -56,4 +63,16 @@ export async function listLoadEntriesForPlayers(
 export async function deleteLoadEntry(supabase: Client, id: string) {
   const { error } = await supabase.from("load_entries").delete().eq("id", id);
   if (error) throw error;
+}
+
+// Admin-only (RLS): entries with a note attached, across every player.
+export async function listEntriesWithNotes(supabase: Client, sinceDays = 60): Promise<LoadEntry[]> {
+  const { data, error } = await supabase
+    .from("load_entries")
+    .select("*")
+    .not("notes", "is", null)
+    .gte("activity_date", isoDateDaysAgo(sinceDays))
+    .order("activity_date", { ascending: false });
+  if (error) throw error;
+  return data;
 }

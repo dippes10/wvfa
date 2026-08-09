@@ -5,12 +5,12 @@ import { createClient } from "@/lib/supabase/server";
 import { listApprovedTestimonials } from "@/lib/services/testimonialService";
 import { buttonVariants } from "@/components/ui/button";
 import { CometCard } from "@/components/ui/comet-card";
-import { LayoutTextFlip } from "@/components/ui/layout-text-flip";
 import { TracingBeam } from "@/components/ui/tracing-beam";
 import { Carousel, Card } from "@/components/ui/apple-cards-carousel";
 import { ThemeToggle } from "@/components/fx/theme-toggle";
 import { HeroGraphic } from "@/components/fx/hero-graphic";
 import { BrandMark } from "@/components/fx/brand-mark";
+import { SectionHeading } from "@/components/fx/section-heading";
 import { LandingGlobeLoader } from "@/components/scenes/landing-globe-loader";
 import { TestimonialsDisplay } from "@/components/testimonials-display";
 import { GALLERY_ITEMS } from "@/lib/data/gallery";
@@ -19,17 +19,17 @@ const FEATURES = [
   {
     icon: Activity,
     title: "Training Load",
-    body: "Log RPE-based sessions and get an instant heads-up before overtraining becomes an injury.",
+    body: "RPE-based session logging with an instant heads-up before overtraining becomes an injury.",
   },
   {
     icon: MoonStar,
     title: "Sleep Analysis",
-    body: "Track hours and quality with an illustrated scale kids actually enjoy filling in.",
+    body: "Hours and quality, tracked daily, with trends that surface what's actually changing.",
   },
   {
     icon: BarChart3,
     title: "Admin Insights",
-    body: "One live view of the whole academy — flagged players, approvals, and every entry as it lands.",
+    body: "One live view of the whole academy — flagged players, approvals, every entry as it lands.",
   },
 ] as const;
 
@@ -56,19 +56,23 @@ export default async function HomePage() {
           </div>
         </header>
 
-        <div className="relative z-10 flex flex-col items-center gap-6 px-6 pt-6 pb-20 text-center text-white sm:pt-12 sm:pb-28">
-          <LayoutTextFlip text="Track your" words={["Training Load", "Sleep", "Recovery", "Progress"]} />
-          <h1 className="max-w-3xl text-4xl font-extrabold tracking-tight text-balance text-white sm:text-6xl">
-            <span className="text-metallic-gold">Western Victoria</span> Football Academy
+        <div className="relative z-10 flex flex-col items-center gap-5 px-6 pt-10 pb-24 text-center sm:pt-16 sm:pb-32">
+          <p className="text-xs font-semibold tracking-[0.25em] text-primary uppercase">
+            Western Victoria Football Academy
+          </p>
+          <h1 className="max-w-2xl text-4xl font-extrabold tracking-tight text-balance text-white sm:text-6xl">
+            Train <span className="text-metallic-gold">smarter</span>. Recover{" "}
+            <span className="text-metallic-gold">better</span>.
           </h1>
-          <p className="max-w-md text-lg text-white/70">
-            Stay injury-free and see your progress — built for WVFA players, parents, and admins.
+          <p className="max-w-md text-lg text-white/65">
+            Session load, sleep, and recovery — tracked properly, for players, parents, and
+            coaches across the academy.
           </p>
           <Link
             href="/login"
             className={cn(
               buttonVariants({ size: "lg" }),
-              "shine-sweep bg-metallic-gold rounded-full border-0 px-8 text-base font-semibold shadow-lg shadow-black/40",
+              "shine-sweep bg-metallic-gold mt-2 rounded-full border-0 px-8 text-base font-semibold shadow-lg shadow-black/40",
             )}
           >
             Get started
@@ -78,12 +82,10 @@ export default async function HomePage() {
 
       <div className="px-4 md:px-16">
         <TracingBeam className="max-w-5xl">
-          <div className="space-y-24 py-16">
+          <div className="space-y-24 py-20">
             <section>
-              <h2 className="mb-10 text-center text-2xl font-bold tracking-tight sm:text-3xl">
-                Everything the academy needs
-              </h2>
-              <div className="grid gap-6 sm:grid-cols-3">
+              <SectionHeading eyebrow="Platform" title="Everything the academy needs" />
+              <div className="mt-10 grid gap-6 sm:grid-cols-3">
                 {FEATURES.map((feature) => {
                   const Icon = feature.icon;
                   return (
@@ -102,40 +104,38 @@ export default async function HomePage() {
             </section>
 
             <section>
-              <h2 className="mb-8 text-center text-2xl font-bold tracking-tight sm:text-3xl">
-                A look inside WVFA
-              </h2>
-              <Carousel
-                items={GALLERY_ITEMS.map((item, i) => (
-                  <Card
-                    key={item.title}
-                    index={i}
-                    layout
-                    card={{
-                      src: item.src,
-                      title: item.title,
-                      category: item.category,
-                      content: (
-                        <p className="text-neutral-600 dark:text-neutral-400">{item.description}</p>
-                      ),
-                    }}
-                  />
-                ))}
-              />
+              <SectionHeading eyebrow="Gallery" title="A look inside WVFA" />
+              <div className="mt-8">
+                <Carousel
+                  items={GALLERY_ITEMS.map((item, i) => (
+                    <Card
+                      key={item.title}
+                      index={i}
+                      layout
+                      card={{
+                        src: item.src,
+                        title: item.title,
+                        category: item.category,
+                        content: (
+                          <p className="text-neutral-600 dark:text-neutral-400">
+                            {item.description}
+                          </p>
+                        ),
+                      }}
+                    />
+                  ))}
+                />
+              </div>
             </section>
 
             <section>
-              <h2 className="mb-2 text-center text-2xl font-bold tracking-tight sm:text-3xl">
-                What our community says
-              </h2>
+              <SectionHeading eyebrow="Testimonials" title="What our community says" />
               <TestimonialsDisplay testimonials={testimonials} />
             </section>
 
-            <section className="text-center">
-              <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
-                Proudly serving Western Victoria
-              </h2>
-              <p className="mx-auto mt-3 max-w-md text-muted-foreground">
+            <section>
+              <SectionHeading eyebrow="Coverage" title="Proudly serving Western Victoria" />
+              <p className="mx-auto mt-3 max-w-md text-center text-muted-foreground">
                 Ballarat · Geelong · Warrnambool · Colac · Hamilton · Ararat
               </p>
               <div className="mt-8">

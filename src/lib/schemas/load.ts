@@ -5,6 +5,7 @@ export const loadEntrySchema = z.object({
   description: z.string().min(1, "Add a short description").max(120),
   durationMinutes: z.coerce.number().int().min(1, "Must be at least 1 minute").max(600),
   rpe: z.coerce.number().int().min(0).max(10),
+  notes: z.string().max(500).optional(),
 });
 
 export type LoadEntryInput = z.infer<typeof loadEntrySchema>;

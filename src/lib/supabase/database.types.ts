@@ -18,6 +18,7 @@ export interface Database {
           role: UserRole;
           status: UserStatus;
           date_of_birth: string | null;
+          team_id: string | null;
           created_at: string;
         };
         Insert: Partial<Database["public"]["Tables"]["profiles"]["Row"]> & {
@@ -25,6 +26,20 @@ export interface Database {
           email: string;
         };
         Update: Partial<Database["public"]["Tables"]["profiles"]["Row"]>;
+        Relationships: [];
+      };
+      teams: {
+        Row: {
+          id: string;
+          name: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["teams"]["Insert"]>;
         Relationships: [];
       };
       guardians_players: {
@@ -50,6 +65,8 @@ export interface Database {
           duration_minutes: number;
           rpe: number;
           session_load: number;
+          notes: string | null;
+          logged_by: string | null;
           created_at: string;
         };
         Insert: {
@@ -59,6 +76,8 @@ export interface Database {
           description: string;
           duration_minutes: number;
           rpe: number;
+          notes?: string | null;
+          logged_by?: string | null;
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["load_entries"]["Insert"]>;

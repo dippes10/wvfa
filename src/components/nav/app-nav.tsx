@@ -15,6 +15,8 @@ const NAV_BY_ROLE: Record<UserRole, NavLink[]> = {
   head_admin: [
     { href: "/admin", label: "Overview" },
     { href: "/admin/users", label: "Users" },
+    { href: "/admin/teams", label: "Teams" },
+    { href: "/admin/alerts", label: "Alerts" },
     { href: "/admin/testimonials", label: "Testimonials" },
     { href: "/admin/settings", label: "Settings" },
   ],

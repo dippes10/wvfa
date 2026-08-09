@@ -13,6 +13,7 @@ import { computeLoadRisk } from "@/lib/analysis/load-flags";
 import { Users } from "lucide-react";
 import { LoadChart } from "@/components/charts/load-chart";
 import { SleepChart } from "@/components/charts/sleep-chart";
+import { WeeklyTrendsPanel } from "@/components/charts/weekly-trends-panel";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -49,6 +50,7 @@ function ChildCard({
             </AlertDescription>
           </Alert>
         )}
+        <WeeklyTrendsPanel entries={loadEntries} />
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <p className="mb-1 text-sm font-medium text-muted-foreground">Training load</p>
@@ -59,6 +61,23 @@ function ChildCard({
             <SleepChart entries={sleepEntries} />
           </div>
         </div>
+        {loadEntries.some((e) => e.notes) && (
+          <div className="space-y-2 border-t border-border pt-4">
+            <p className="text-sm font-medium text-muted-foreground">Recent notes</p>
+            <ul className="space-y-1.5 text-sm">
+              {loadEntries
+                .filter((e) => e.notes)
+                .slice(-5)
+                .reverse()
+                .map((e) => (
+                  <li key={e.id} className="rounded-lg border p-2">
+                    <span className="text-xs text-muted-foreground">{e.activity_date}</span> —{" "}
+                    {e.notes}
+                  </li>
+                ))}
+            </ul>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
@@ -76,7 +95,7 @@ export default async function ParentPage() {
     playerIds.map(async (id) => {
       const [child, loadEntries, sleepEntries] = await Promise.all([
         getProfileById(supabase, id),
-        listLoadEntries(supabase, id, 30),
+        listLoadEntries(supabase, id, 60),
         listSleepEntries(supabase, id, 30),
       ]);
       return { child, loadEntries, sleepEntries };

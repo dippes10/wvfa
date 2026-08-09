@@ -1,14 +1,15 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { listActivePlayers, listPendingProfiles } from "@/lib/services/userService";
-import { listLoadEntriesForPlayers, type LoadEntry } from "@/lib/services/loadService";
+import { listLoadEntriesForPlayers } from "@/lib/services/loadService";
 import { listSleepEntriesForPlayers } from "@/lib/services/sleepService";
 import { getSettings } from "@/lib/services/settingsService";
-import { computeLoadRisk } from "@/lib/analysis/load-flags";
+import { getFlaggedPlayers } from "@/lib/analysis/flagged-players";
 import { LayoutDashboard } from "lucide-react";
 import { LoadChart } from "@/components/charts/load-chart";
 import { SleepChart } from "@/components/charts/sleep-chart";
 import { Sparkline } from "@/components/charts/sparkline";
+import { WeeklyTrendsPanel } from "@/components/charts/weekly-trends-panel";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CometCard } from "@/components/ui/comet-card";
@@ -23,7 +24,7 @@ export default async function AdminOverviewPage() {
 
   const playerIds = players.map((p) => p.id);
   const [loadEntries, sleepEntries] = await Promise.all([
-    listLoadEntriesForPlayers(supabase, playerIds, 30),
+    listLoadEntriesForPlayers(supabase, playerIds, 60),
     listSleepEntriesForPlayers(supabase, playerIds, 30),
   ]);
 
@@ -43,15 +44,12 @@ export default async function AdminOverviewPage() {
       sleepEntries.filter((e) => e.entry_date === date).length,
   );
 
-  const byPlayer = new Map<string, LoadEntry[]>();
-  for (const e of loadEntries) {
-    const arr = byPlayer.get(e.player_id) ?? [];
-    arr.push(e);
-    byPlayer.set(e.player_id, arr);
-  }
-  const flagged = players
-    .map((player) => ({ player, risk: computeLoadRisk(byPlayer.get(player.id) ?? [], settings) }))
-    .filter((r) => r.risk.isFlagged);
+  const flagged = getFlaggedPlayers(players, loadEntries, settings);
+
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  const thirtyDaysAgoIso = thirtyDaysAgo.toISOString().slice(0, 10);
+  const recentLoadEntries = loadEntries.filter((e) => e.activity_date >= thirtyDaysAgoIso);
 
   return (
     <div className="mx-auto max-w-5xl space-y-6 p-4 pb-24 sm:p-6">
@@ -101,13 +99,22 @@ export default async function AdminOverviewPage() {
         </Link>
       </div>
 
+      <Card className="rounded-3xl">
+        <CardHeader>
+          <CardTitle className="text-base">Academy-wide weekly trends</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <WeeklyTrendsPanel entries={loadEntries} />
+        </CardContent>
+      </Card>
+
       <div className="grid gap-4 sm:grid-cols-2">
         <Card className="rounded-3xl">
           <CardHeader>
             <CardTitle className="text-base">Academy-wide load (30d)</CardTitle>
           </CardHeader>
           <CardContent>
-            <LoadChart entries={loadEntries} />
+            <LoadChart entries={recentLoadEntries} />
           </CardContent>
         </Card>
         <Card className="rounded-3xl">

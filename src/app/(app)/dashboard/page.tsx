@@ -8,11 +8,14 @@ import { listSleepEntries } from "@/lib/services/sleepService";
 import { getSettings } from "@/lib/services/settingsService";
 import { computeLoadRisk } from "@/lib/analysis/load-flags";
 import { computeStreak } from "@/lib/analysis/streak";
+import { listTeams } from "@/lib/services/teamService";
 import { LoadChart } from "@/components/charts/load-chart";
 import { SleepChart } from "@/components/charts/sleep-chart";
 import { RiskGauge } from "@/components/charts/risk-gauge";
+import { WeeklyTrendsPanel } from "@/components/charts/weekly-trends-panel";
 import { PlayerSceneLoader } from "@/components/scenes/player-scene-loader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { CometCard } from "@/components/ui/comet-card";
 
 export default async function DashboardPage() {
@@ -20,11 +23,13 @@ export default async function DashboardPage() {
   const profile = await getOwnProfile(supabase);
   if (!profile) redirect("/login");
 
-  const [loadEntries, sleepEntries, settings] = await Promise.all([
-    listLoadEntries(supabase, profile.id, 30),
+  const [loadEntries, sleepEntries, settings, teams] = await Promise.all([
+    listLoadEntries(supabase, profile.id, 60),
     listSleepEntries(supabase, profile.id, 30),
     getSettings(supabase),
+    listTeams(supabase),
   ]);
+  const team = teams.find((t) => t.id === profile.team_id);
 
   const risk = computeLoadRisk(loadEntries, settings);
   const streak = computeStreak([
@@ -37,11 +42,19 @@ export default async function DashboardPage() {
   const loggedSleepToday = sleepEntries.some((e) => e.entry_date === today);
   const firstName = profile.full_name?.split(" ")[0] ?? "there";
 
+  const chartWindowStart = new Date();
+  chartWindowStart.setDate(chartWindowStart.getDate() - 21);
+  const chartWindowStartIso = chartWindowStart.toISOString().slice(0, 10);
+  const recentLoadEntries = loadEntries.filter((e) => e.activity_date >= chartWindowStartIso);
+
   return (
     <div className="mx-auto max-w-3xl space-y-6 p-4 pb-24 sm:p-6">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Hey {firstName}</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-bold">Hey {firstName}</h1>
+            {team && <Badge variant="secondary">{team.name}</Badge>}
+          </div>
           <p className="flex items-center gap-1.5 text-muted-foreground">
             {streak > 0 ? (
               <>
@@ -72,6 +85,15 @@ export default async function DashboardPage() {
               Try to avoid another hard session until you&apos;ve had a recovery day.
             </p>
           )}
+        </CardContent>
+      </Card>
+
+      <Card className="rounded-3xl">
+        <CardHeader>
+          <CardTitle className="text-base">Weekly trends</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <WeeklyTrendsPanel entries={loadEntries} />
         </CardContent>
       </Card>
 
@@ -123,10 +145,10 @@ export default async function DashboardPage() {
       <div className="grid gap-4 sm:grid-cols-2">
         <Card className="rounded-3xl">
           <CardHeader>
-            <CardTitle className="text-base">This week&apos;s load</CardTitle>
+            <CardTitle className="text-base">Load — last 3 weeks</CardTitle>
           </CardHeader>
           <CardContent>
-            <LoadChart entries={loadEntries} />
+            <LoadChart entries={recentLoadEntries} />
           </CardContent>
         </Card>
         <Card className="rounded-3xl">

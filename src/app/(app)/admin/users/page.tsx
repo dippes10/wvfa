@@ -1,6 +1,7 @@
 import { Users } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { listAllProfiles, listGuardianLinks } from "@/lib/services/userService";
+import { listTeams } from "@/lib/services/teamService";
 import { approveUserAction, linkGuardianAction, unlinkGuardianAction } from "@/lib/actions/admin-actions";
 import { assignableRoles } from "@/lib/schemas/user";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,9 +28,10 @@ export default async function AdminUsersPage() {
     data: { user: currentUser },
   } = await supabase.auth.getUser();
 
-  const [profiles, links] = await Promise.all([
+  const [profiles, links, teams] = await Promise.all([
     listAllProfiles(supabase),
     listGuardianLinks(supabase),
+    listTeams(supabase),
   ]);
 
   const pending = profiles.filter((p) => p.status === "pending");
@@ -98,7 +100,7 @@ export default async function AdminUsersPage() {
           <CardTitle className="text-base">All users</CardTitle>
         </CardHeader>
         <CardContent>
-          <UserTable profiles={profiles} currentUserId={currentUser?.id} />
+          <UserTable profiles={profiles} currentUserId={currentUser?.id} teams={teams} />
         </CardContent>
       </Card>
 

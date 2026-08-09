@@ -24,13 +24,14 @@ export async function submitLoadEntry(
     description: formData.get("description"),
     durationMinutes: formData.get("durationMinutes"),
     rpe: formData.get("rpe"),
+    notes: formData.get("notes") || undefined,
   });
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Please check the form." };
   }
 
   try {
-    await createLoadEntry(supabase, user.id, parsed.data);
+    await createLoadEntry(supabase, user.id, user.id, parsed.data);
   } catch {
     return { error: "Couldn't save that session. Try again." };
   }
@@ -40,9 +41,47 @@ export async function submitLoadEntry(
   return { error: null };
 }
 
+export async function logEntryForPlayerAction(
+  _prevState: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "You need to sign in again." };
+
+  const playerId = formData.get("playerId");
+  if (typeof playerId !== "string" || !playerId) {
+    return { error: "Missing player." };
+  }
+
+  const parsed = loadEntrySchema.safeParse({
+    activityDate: formData.get("activityDate"),
+    description: formData.get("description"),
+    durationMinutes: formData.get("durationMinutes"),
+    rpe: formData.get("rpe"),
+    notes: formData.get("notes") || undefined,
+  });
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Please check the form." };
+  }
+
+  try {
+    await createLoadEntry(supabase, playerId, user.id, parsed.data);
+  } catch {
+    return { error: "Couldn't save that session. Try again." };
+  }
+
+  revalidatePath(`/admin/players/${playerId}`);
+  revalidatePath("/admin");
+  return { error: null };
+}
+
 export async function removeLoadEntry(id: string) {
   const supabase = await createClient();
   await deleteLoadEntry(supabase, id);
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/load");
+  revalidatePath("/admin");
 }

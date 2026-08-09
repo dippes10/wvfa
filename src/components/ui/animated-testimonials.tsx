@@ -39,9 +39,9 @@ export const AnimatedTestimonials = ({
     }
   }, [autoplay, handleNext]);
 
-  // Stable per-card tilt instead of Math.random() (impure during render).
+  // Stable, restrained per-card tilt instead of Math.random() (impure during render).
   const rotations = useMemo(
-    () => testimonials.map((_, i) => ((i * 47) % 21) - 10),
+    () => testimonials.map((_, i) => ((i * 47) % 7) - 3),
     [testimonials],
   );
   return (
@@ -67,7 +67,7 @@ export const AnimatedTestimonials = ({
                     zIndex: isActive(index)
                       ? 40
                       : testimonials.length + 2 - index,
-                    y: isActive(index) ? [0, -80, 0] : 0,
+                    y: isActive(index) ? [0, -16, 0] : 0,
                   }}
                   exit={{
                     opacity: 0,

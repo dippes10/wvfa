@@ -1,33 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800">
   <defs>
-    <linearGradient id="bg5" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#1a1a1a"/>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1c1c1c"/>
       <stop offset="100%" stop-color="#050505"/>
     </linearGradient>
-    <linearGradient id="gold5" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#f5d98a"/>
-      <stop offset="50%" stop-color="#d4af37"/>
-      <stop offset="100%" stop-color="#9c7a25"/>
-    </linearGradient>
   </defs>
-  <rect width="600" height="800" fill="url(#bg5)"/>
-  <g opacity="0.08" stroke="#d4af37" stroke-width="1">
-    <circle cx="300" cy="360" r="260" fill="none"/>
-    <circle cx="300" cy="360" r="340" fill="none"/>
+  <rect width="600" height="800" fill="url(#bg)"/>
+  <g opacity="0.07" stroke="#d4af37" stroke-width="1">
+    <circle cx="300" cy="420" r="260" fill="none"/>
+    <circle cx="300" cy="420" r="360" fill="none"/>
   </g>
-  <g>
-    <circle cx="220" cy="300" r="34" fill="url(#gold5)"/>
-    <path d="M 160 400 a 60 55 0 0 1 120 0 z" fill="url(#gold5)"/>
-  </g>
-  <g>
-    <circle cx="300" cy="240" r="40" fill="none" stroke="#ec5a9c" stroke-width="8"/>
-    <path d="M 228 355 a 72 65 0 0 1 144 0 z" fill="none" stroke="#ec5a9c" stroke-width="8"/>
-  </g>
-  <g>
-    <circle cx="382" cy="300" r="34" fill="url(#gold5)"/>
-    <path d="M 322 400 a 60 55 0 0 1 120 0 z" fill="url(#gold5)"/>
-  </g>
-  <rect x="120" y="560" width="360" height="6" rx="3" fill="#d4af37" opacity="0.5"/>
-  <text x="300" y="630" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="40" font-weight="700" fill="#ffffff" letter-spacing="2">Community</text>
-  <text x="300" y="672" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="22" fill="#d4af37" letter-spacing="4">&amp; FAMILY</text>
+  <rect x="60" y="700" width="52" height="2" fill="#ec5a9c"/>
 </svg>

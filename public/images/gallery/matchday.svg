@@ -1,27 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800">
   <defs>
-    <linearGradient id="bg2" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#1a1a1a"/>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1c1c1c"/>
       <stop offset="100%" stop-color="#050505"/>
     </linearGradient>
-    <linearGradient id="gold2" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#f5d98a"/>
-      <stop offset="50%" stop-color="#d4af37"/>
-      <stop offset="100%" stop-color="#9c7a25"/>
-    </linearGradient>
   </defs>
-  <rect width="600" height="800" fill="url(#bg2)"/>
-  <g opacity="0.08" stroke="#d4af37" stroke-width="1">
-    <circle cx="300" cy="380" r="260" fill="none"/>
-    <circle cx="300" cy="380" r="340" fill="none"/>
+  <rect width="600" height="800" fill="url(#bg)"/>
+  <g opacity="0.07" stroke="#d4af37" stroke-width="1">
+    <circle cx="300" cy="420" r="260" fill="none"/>
+    <circle cx="300" cy="420" r="360" fill="none"/>
   </g>
-  <path d="M 230 190 h 140 v 90 c 0 60 -35 100 -70 110 c -35 -10 -70 -50 -70 -110 z" fill="none" stroke="url(#gold2)" stroke-width="10" stroke-linejoin="round"/>
-  <ellipse cx="215" cy="215" rx="18" ry="26" fill="none" stroke="url(#gold2)" stroke-width="8"/>
-  <ellipse cx="385" cy="215" rx="18" ry="26" fill="none" stroke="url(#gold2)" stroke-width="8"/>
-  <rect x="270" y="390" width="60" height="70" fill="url(#gold2)"/>
-  <rect x="240" y="452" width="120" height="24" rx="8" fill="url(#gold2)"/>
-  <circle cx="300" cy="230" r="5" fill="#050505"/>
-  <rect x="120" y="580" width="360" height="6" rx="3" fill="#d4af37" opacity="0.5"/>
-  <text x="300" y="650" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="40" font-weight="700" fill="#ffffff" letter-spacing="2">Match</text>
-  <text x="300" y="692" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="22" fill="#d4af37" letter-spacing="4">DAYS</text>
+  <rect x="60" y="700" width="52" height="2" fill="#d4af37"/>
 </svg>

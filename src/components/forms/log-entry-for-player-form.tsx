@@ -1,7 +1,8 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { submitLoadEntry, type ActionState } from "@/lib/actions/load-actions";
+import { logEntryForPlayerAction } from "@/lib/actions/load-actions";
+import type { ActionState } from "@/lib/actions/load-actions";
 import { EmojiScale, RPE_POINTS } from "./emoji-scale";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,8 +20,8 @@ import { activityOptions } from "@/lib/schemas/load";
 
 const initialState: ActionState = { error: null };
 
-export function LoadEntryForm() {
-  const [state, formAction, pending] = useActionState(submitLoadEntry, initialState);
+export function LogEntryForPlayerForm({ playerId }: { playerId: string }) {
+  const [state, formAction, pending] = useActionState(logEntryForPlayerAction, initialState);
   const [duration, setDuration] = useState(60);
   const [activity, setActivity] = useState<string>(activityOptions[0]);
   const [customActivity, setCustomActivity] = useState("");
@@ -29,11 +30,12 @@ export function LoadEntryForm() {
 
   return (
     <form action={formAction} className="space-y-5">
+      <input type="hidden" name="playerId" value={playerId} />
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
-          <Label htmlFor="activityDate">Date</Label>
+          <Label htmlFor="admin-activityDate">Date</Label>
           <Input
-            id="activityDate"
+            id="admin-activityDate"
             name="activityDate"
             type="date"
             defaultValue={today}
@@ -42,9 +44,9 @@ export function LoadEntryForm() {
           />
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="description">Activity</Label>
+          <Label htmlFor="admin-description">Activity</Label>
           <Select value={activity} onValueChange={(v) => setActivity(v ?? activityOptions[0])}>
-            <SelectTrigger id="description" className="w-full">
+            <SelectTrigger id="admin-description" className="w-full">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -61,9 +63,9 @@ export function LoadEntryForm() {
 
       {isOther && (
         <div className="space-y-1.5">
-          <Label htmlFor="customActivity">Custom activity name</Label>
+          <Label htmlFor="admin-customActivity">Custom activity name</Label>
           <Input
-            id="customActivity"
+            id="admin-customActivity"
             value={customActivity}
             onChange={(e) => setCustomActivity(e.target.value)}
             placeholder="e.g. Futsal, Speed & agility"
@@ -86,27 +88,27 @@ export function LoadEntryForm() {
       </div>
 
       <div className="space-y-2">
-        <Label>How hard did it feel?</Label>
+        <Label>Effort (RPE)</Label>
         <EmojiScale name="rpe" points={RPE_POINTS} defaultValue={5} />
       </div>
 
       <div className="space-y-1.5">
-        <Label htmlFor="notes">
+        <Label htmlFor="admin-notes">
           Notes <span className="font-normal text-muted-foreground">(optional)</span>
         </Label>
         <Textarea
-          id="notes"
+          id="admin-notes"
           name="notes"
           rows={3}
           maxLength={500}
-          placeholder="e.g. mild calf soreness, worsened during session"
+          placeholder="e.g. sore ankle after collision"
         />
       </div>
 
       {state.error && <p className="text-sm text-destructive">{state.error}</p>}
 
       <Button type="submit" disabled={pending} className="w-full rounded-full">
-        {pending ? "Saving…" : "Log this session"}
+        {pending ? "Saving…" : "Log session for this player"}
       </Button>
     </form>
   );

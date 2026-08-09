@@ -1,9 +1,14 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { changeRoleAction, deactivateUserAction } from "@/lib/actions/admin-actions";
+import {
+  changeRoleAction,
+  deactivateUserAction,
+  assignTeamAction,
+} from "@/lib/actions/admin-actions";
 import { assignableRoles } from "@/lib/schemas/user";
 import type { Profile } from "@/lib/services/userService";
+import type { Team } from "@/lib/services/teamService";
 import { GooeyInput } from "@/components/ui/gooey-input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -32,9 +37,11 @@ const roleLabels: Record<string, string> = {
 export function UserTable({
   profiles,
   currentUserId,
+  teams,
 }: {
   profiles: Profile[];
   currentUserId: string | undefined;
+  teams: Team[];
 }) {
   const [search, setSearch] = useState("");
 
@@ -106,6 +113,27 @@ export function UserTable({
                             Update
                           </Button>
                         </form>
+                        {p.role === "player" && (
+                          <form action={assignTeamAction} className="flex items-center gap-2">
+                            <input type="hidden" name="playerId" value={p.id} />
+                            <Select name="teamId" defaultValue={p.team_id ?? "none"}>
+                              <SelectTrigger className="w-32">
+                                <SelectValue placeholder="Team" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="none">No team</SelectItem>
+                                {teams.map((team) => (
+                                  <SelectItem key={team.id} value={team.id}>
+                                    {team.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <Button type="submit" size="sm" variant="secondary">
+                              Set
+                            </Button>
+                          </form>
+                        )}
                         {p.id !== currentUserId && (
                           <form action={deactivateUserAction.bind(null, p.id)}>
                             <Button type="submit" size="sm" variant="ghost">

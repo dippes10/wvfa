@@ -12,6 +12,7 @@ import {
   unlinkGuardianFromPlayer,
 } from "@/lib/services/userService";
 import { updateSettings } from "@/lib/services/settingsService";
+import { createTeam, deleteTeam, assignPlayerTeam } from "@/lib/services/teamService";
 
 // RLS is the real gate on every one of these (see supabase/migrations/0001_init.sql) —
 // a non-admin's write is rejected by Postgres regardless of what happens here.
@@ -64,6 +65,31 @@ export async function unlinkGuardianAction(guardianId: string, playerId: string)
   const supabase = await adminClient();
   await unlinkGuardianFromPlayer(supabase, guardianId, playerId);
   revalidatePath("/admin/users");
+}
+
+export async function createTeamAction(formData: FormData) {
+  const supabase = await adminClient();
+  const name = String(formData.get("name") ?? "").trim();
+  if (!name) return;
+  await createTeam(supabase, name);
+  revalidatePath("/admin/teams");
+}
+
+export async function deleteTeamAction(id: string) {
+  const supabase = await adminClient();
+  await deleteTeam(supabase, id);
+  revalidatePath("/admin/teams");
+  revalidatePath("/admin/users");
+}
+
+export async function assignTeamAction(formData: FormData) {
+  const supabase = await adminClient();
+  const playerId = String(formData.get("playerId") ?? "");
+  const teamId = String(formData.get("teamId") ?? "");
+  if (!playerId) return;
+  await assignPlayerTeam(supabase, playerId, teamId === "none" ? null : teamId);
+  revalidatePath("/admin/users");
+  revalidatePath("/admin/teams");
 }
 
 export interface SettingsActionState {

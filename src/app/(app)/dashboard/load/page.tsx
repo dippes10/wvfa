@@ -16,6 +16,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 export default async function LoadHistoryPage() {
   const supabase = await createClient();
@@ -74,7 +75,19 @@ export default async function LoadHistoryPage() {
                   {sorted.map((entry) => (
                     <TableRow key={entry.id}>
                       <TableCell>{entry.activity_date}</TableCell>
-                      <TableCell>{entry.description}</TableCell>
+                      <TableCell>
+                        <p>{entry.description}</p>
+                        {entry.notes && (
+                          <p className="mt-0.5 max-w-52 text-xs text-muted-foreground">
+                            {entry.notes}
+                          </p>
+                        )}
+                        {entry.logged_by && entry.logged_by !== profile.id && (
+                          <Badge variant="secondary" className="mt-1 text-[10px]">
+                            Logged by coach
+                          </Badge>
+                        )}
+                      </TableCell>
                       <TableCell>{entry.duration_minutes}m</TableCell>
                       <TableCell>{entry.rpe}</TableCell>
                       <TableCell className="font-medium">{entry.session_load}</TableCell>
