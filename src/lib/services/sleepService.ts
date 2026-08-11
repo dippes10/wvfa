@@ -56,3 +56,25 @@ export async function deleteSleepEntry(supabase: Client, id: string) {
   const { error } = await supabase.from("sleep_entries").delete().eq("id", id);
   if (error) throw error;
 }
+
+export interface Page<T> {
+  items: T[];
+  hasMore: boolean;
+}
+
+/** Paginated full history for one player (no date-window cutoff), newest first. */
+export async function listSleepEntriesHistoryPage(
+  supabase: Client,
+  playerId: string,
+  { limit = 10, offset = 0 }: { limit?: number; offset?: number } = {},
+): Promise<Page<SleepEntry>> {
+  const { data, error } = await supabase
+    .from("sleep_entries")
+    .select("*")
+    .eq("player_id", playerId)
+    .order("entry_date", { ascending: false })
+    .order("created_at", { ascending: false })
+    .range(offset, offset + limit);
+  if (error) throw error;
+  return { items: data.slice(0, limit), hasMore: data.length > limit };
+}

@@ -1,30 +1,22 @@
 import { redirect } from "next/navigation";
-import { Activity, Trash2 } from "lucide-react";
+import { Activity } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getOwnProfile } from "@/lib/services/userService";
-import { listLoadEntries } from "@/lib/services/loadService";
-import { removeLoadEntry } from "@/lib/actions/load-actions";
+import { listLoadEntries, listLoadEntriesHistoryPage } from "@/lib/services/loadService";
 import { LoadEntryForm } from "@/components/forms/load-entry-form";
 import { LoadChart } from "@/components/charts/load-chart";
+import { LoadHistoryTable } from "@/components/dashboard/load-history-table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 
 export default async function LoadHistoryPage() {
   const supabase = await createClient();
   const profile = await getOwnProfile(supabase);
   if (!profile) redirect("/login");
 
-  const entries = await listLoadEntries(supabase, profile.id, 60);
-  const sorted = [...entries].sort((a, b) => b.activity_date.localeCompare(a.activity_date));
+  const [entries, historyPage] = await Promise.all([
+    listLoadEntries(supabase, profile.id, 60),
+    listLoadEntriesHistoryPage(supabase, profile.id),
+  ]);
 
   return (
     <div className="mx-auto max-w-3xl space-y-6 p-4 pb-24 sm:p-6">
@@ -56,54 +48,12 @@ export default async function LoadHistoryPage() {
           <CardTitle className="text-base">History</CardTitle>
         </CardHeader>
         <CardContent>
-          {sorted.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No sessions logged yet.</p>
-          ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Activity</TableHead>
-                    <TableHead>Duration</TableHead>
-                    <TableHead>RPE</TableHead>
-                    <TableHead>Load</TableHead>
-                    <TableHead />
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {sorted.map((entry) => (
-                    <TableRow key={entry.id}>
-                      <TableCell>{entry.activity_date}</TableCell>
-                      <TableCell>
-                        <p>{entry.description}</p>
-                        {entry.notes && (
-                          <p className="mt-0.5 max-w-52 text-xs text-muted-foreground">
-                            {entry.notes}
-                          </p>
-                        )}
-                        {entry.logged_by && entry.logged_by !== profile.id && (
-                          <Badge variant="secondary" className="mt-1 text-[10px]">
-                            Logged by coach
-                          </Badge>
-                        )}
-                      </TableCell>
-                      <TableCell>{entry.duration_minutes}m</TableCell>
-                      <TableCell>{entry.rpe}</TableCell>
-                      <TableCell className="font-medium">{entry.session_load}</TableCell>
-                      <TableCell>
-                        <form action={removeLoadEntry.bind(null, entry.id)}>
-                          <Button variant="ghost" size="icon" type="submit" aria-label="Delete entry">
-                            <Trash2 className="size-4" />
-                          </Button>
-                        </form>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          )}
+          <LoadHistoryTable
+            playerId={profile.id}
+            ownerId={profile.id}
+            initialItems={historyPage.items}
+            initialHasMore={historyPage.hasMore}
+          />
         </CardContent>
       </Card>
     </div>

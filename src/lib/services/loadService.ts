@@ -76,3 +76,40 @@ export async function listEntriesWithNotes(supabase: Client, sinceDays = 60): Pr
   if (error) throw error;
   return data;
 }
+
+export interface Page<T> {
+  items: T[];
+  hasMore: boolean;
+}
+
+/** Paginated full history for one player (no date-window cutoff), newest first. */
+export async function listLoadEntriesHistoryPage(
+  supabase: Client,
+  playerId: string,
+  { limit = 10, offset = 0 }: { limit?: number; offset?: number } = {},
+): Promise<Page<LoadEntry>> {
+  const { data, error } = await supabase
+    .from("load_entries")
+    .select("*")
+    .eq("player_id", playerId)
+    .order("activity_date", { ascending: false })
+    .order("created_at", { ascending: false })
+    .range(offset, offset + limit);
+  if (error) throw error;
+  return { items: data.slice(0, limit), hasMore: data.length > limit };
+}
+
+/** Paginated version of listEntriesWithNotes for the admin alerts page. */
+export async function listEntriesWithNotesPage(
+  supabase: Client,
+  { limit = 10, offset = 0 }: { limit?: number; offset?: number } = {},
+): Promise<Page<LoadEntry>> {
+  const { data, error } = await supabase
+    .from("load_entries")
+    .select("*")
+    .not("notes", "is", null)
+    .order("activity_date", { ascending: false })
+    .range(offset, offset + limit);
+  if (error) throw error;
+  return { items: data.slice(0, limit), hasMore: data.length > limit };
+}

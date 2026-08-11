@@ -2,26 +2,30 @@ import { MessageSquareQuote } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import {
   listPendingTestimonials,
-  listReviewedTestimonials,
+  listReviewedTestimonialsPage,
 } from "@/lib/services/testimonialService";
 import {
   approveTestimonialAction,
   rejectTestimonialAction,
 } from "@/lib/actions/testimonial-actions";
+import { ReviewedTestimonialsTable } from "@/components/admin/reviewed-testimonials-table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-
-const statusVariant: Record<string, "default" | "destructive"> = {
-  approved: "default",
-  rejected: "destructive",
-};
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export default async function AdminTestimonialsPage() {
   const supabase = await createClient();
-  const [pending, reviewed] = await Promise.all([
+  const [pending, reviewedPage] = await Promise.all([
     listPendingTestimonials(supabase),
-    listReviewedTestimonials(supabase),
+    listReviewedTestimonialsPage(supabase),
   ]);
 
   return (
@@ -44,30 +48,44 @@ export default async function AdminTestimonialsPage() {
           {pending.length === 0 ? (
             <p className="text-sm text-muted-foreground">Nothing waiting on you right now.</p>
           ) : (
-            <ul className="space-y-3">
-              {pending.map((t) => (
-                <li key={t.id} className="space-y-3 rounded-xl border p-4">
-                  <div>
-                    <p className="font-medium">
-                      {t.author_name} <span className="text-muted-foreground">— {t.designation}</span>
-                    </p>
-                    <p className="mt-1 text-sm text-muted-foreground">{t.quote}</p>
-                  </div>
-                  <div className="flex gap-2">
-                    <form action={approveTestimonialAction.bind(null, t.id)}>
-                      <Button type="submit" size="sm" className="rounded-full">
-                        Approve
-                      </Button>
-                    </form>
-                    <form action={rejectTestimonialAction.bind(null, t.id)}>
-                      <Button type="submit" size="sm" variant="ghost">
-                        Reject
-                      </Button>
-                    </form>
-                  </div>
-                </li>
-              ))}
-            </ul>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Author</TableHead>
+                    <TableHead>Quote</TableHead>
+                    <TableHead />
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {pending.map((t) => (
+                    <TableRow key={t.id}>
+                      <TableCell>
+                        <p className="font-medium">{t.author_name}</p>
+                        <p className="text-xs text-muted-foreground">{t.designation}</p>
+                      </TableCell>
+                      <TableCell className="max-w-sm">
+                        <p className="text-muted-foreground">{t.quote}</p>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex gap-2">
+                          <form action={approveTestimonialAction.bind(null, t.id)}>
+                            <Button type="submit" size="sm" className="rounded-full">
+                              Approve
+                            </Button>
+                          </form>
+                          <form action={rejectTestimonialAction.bind(null, t.id)}>
+                            <Button type="submit" size="sm" variant="ghost">
+                              Reject
+                            </Button>
+                          </form>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           )}
         </CardContent>
       </Card>
@@ -77,28 +95,10 @@ export default async function AdminTestimonialsPage() {
           <CardTitle className="text-base">Reviewed</CardTitle>
         </CardHeader>
         <CardContent>
-          {reviewed.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No reviewed testimonials yet.</p>
-          ) : (
-            <ul className="space-y-2">
-              {reviewed.map((t) => (
-                <li
-                  key={t.id}
-                  className="flex items-start justify-between gap-3 rounded-xl border p-3 text-sm"
-                >
-                  <div>
-                    <p className="font-medium">
-                      {t.author_name} <span className="text-muted-foreground">— {t.designation}</span>
-                    </p>
-                    <p className="line-clamp-2 text-muted-foreground">{t.quote}</p>
-                  </div>
-                  <Badge variant={statusVariant[t.status]} className="shrink-0">
-                    {t.status}
-                  </Badge>
-                </li>
-              ))}
-            </ul>
-          )}
+          <ReviewedTestimonialsTable
+            initialItems={reviewedPage.items}
+            initialHasMore={reviewedPage.hasMore}
+          />
         </CardContent>
       </Card>
     </div>

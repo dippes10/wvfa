@@ -4,6 +4,7 @@ import { getOwnProfile } from "@/lib/services/userService";
 import { Sidebar, SidebarBody } from "@/components/ui/sidebar";
 import { AdminSidebarContent } from "@/components/nav/admin-sidebar-content";
 import { RouteTracingBeam } from "@/components/nav/route-tracing-beam";
+import { IdleSessionGuard } from "@/components/auth/idle-session-guard";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -13,6 +14,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   return (
     <div className="flex min-h-screen w-full flex-col md:flex-row">
+      <IdleSessionGuard />
       <Sidebar>
         <SidebarBody className="justify-between gap-6">
           <AdminSidebarContent name={profile.full_name ?? profile.email} />

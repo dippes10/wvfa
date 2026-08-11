@@ -1,6 +1,6 @@
 import { Users } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
-import { listAllProfiles, listGuardianLinks } from "@/lib/services/userService";
+import { listAllProfiles, listAllProfilesPage, listGuardianLinks } from "@/lib/services/userService";
 import { listTeams } from "@/lib/services/teamService";
 import { approveUserAction, linkGuardianAction, unlinkGuardianAction } from "@/lib/actions/admin-actions";
 import { assignableRoles } from "@/lib/schemas/user";
@@ -15,6 +15,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { UserTable } from "@/components/admin/user-table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 const roleLabels: Record<string, string> = {
   head_admin: "Head Admin",
@@ -28,10 +36,11 @@ export default async function AdminUsersPage() {
     data: { user: currentUser },
   } = await supabase.auth.getUser();
 
-  const [profiles, links, teams] = await Promise.all([
+  const [profiles, links, teams, usersPage] = await Promise.all([
     listAllProfiles(supabase),
     listGuardianLinks(supabase),
     listTeams(supabase),
+    listAllProfilesPage(supabase),
   ]);
 
   const pending = profiles.filter((p) => p.status === "pending");
@@ -60,37 +69,46 @@ export default async function AdminUsersPage() {
           {pending.length === 0 ? (
             <p className="text-sm text-muted-foreground">No one is waiting on approval.</p>
           ) : (
-            <ul className="space-y-3">
-              {pending.map((p) => (
-                <li
-                  key={p.id}
-                  className="flex flex-wrap items-center justify-between gap-3 rounded-xl border p-3"
-                >
-                  <div>
-                    <p className="font-medium">{p.full_name ?? "Unnamed"}</p>
-                    <p className="text-sm text-muted-foreground">{p.email}</p>
-                  </div>
-                  <form action={approveUserAction} className="flex items-center gap-2">
-                    <input type="hidden" name="userId" value={p.id} />
-                    <Select name="role" defaultValue="player">
-                      <SelectTrigger className="w-36">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {assignableRoles.map((role) => (
-                          <SelectItem key={role} value={role}>
-                            {roleLabels[role]}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <Button type="submit" size="sm" className="rounded-full">
-                      Approve
-                    </Button>
-                  </form>
-                </li>
-              ))}
-            </ul>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead />
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {pending.map((p) => (
+                    <TableRow key={p.id}>
+                      <TableCell>
+                        <p className="font-medium">{p.full_name ?? "Unnamed"}</p>
+                        <p className="text-xs text-muted-foreground">{p.email}</p>
+                      </TableCell>
+                      <TableCell>
+                        <form action={approveUserAction} className="flex items-center justify-end gap-2">
+                          <input type="hidden" name="userId" value={p.id} />
+                          <Select name="role" defaultValue="player">
+                            <SelectTrigger className="w-36">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {assignableRoles.map((role) => (
+                                <SelectItem key={role} value={role}>
+                                  {roleLabels[role]}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <Button type="submit" size="sm" className="rounded-full">
+                            Approve
+                          </Button>
+                        </form>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           )}
         </CardContent>
       </Card>
@@ -100,7 +118,12 @@ export default async function AdminUsersPage() {
           <CardTitle className="text-base">All users</CardTitle>
         </CardHeader>
         <CardContent>
-          <UserTable profiles={profiles} currentUserId={currentUser?.id} teams={teams} />
+          <UserTable
+            currentUserId={currentUser?.id}
+            teams={teams}
+            initialItems={usersPage.items}
+            initialHasMore={usersPage.hasMore}
+          />
         </CardContent>
       </Card>
 
@@ -148,30 +171,41 @@ export default async function AdminUsersPage() {
           {links.length === 0 ? (
             <p className="text-sm text-muted-foreground">No links yet.</p>
           ) : (
-            <ul className="space-y-2">
-              {links.map((link) => {
-                const guardian = profileById.get(link.guardian_id);
-                const player = profileById.get(link.player_id);
-                return (
-                  <li
-                    key={`${link.guardian_id}-${link.player_id}`}
-                    className="flex items-center justify-between rounded-xl border p-2.5 text-sm"
-                  >
-                    <span>
-                      <strong>{guardian?.full_name ?? guardian?.email ?? "Unknown"}</strong> →{" "}
-                      {player?.full_name ?? player?.email ?? "Unknown"}
-                    </span>
-                    <form
-                      action={unlinkGuardianAction.bind(null, link.guardian_id, link.player_id)}
-                    >
-                      <Button type="submit" size="sm" variant="ghost">
-                        Unlink
-                      </Button>
-                    </form>
-                  </li>
-                );
-              })}
-            </ul>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Parent</TableHead>
+                    <TableHead>Player</TableHead>
+                    <TableHead />
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {links.map((link) => {
+                    const guardian = profileById.get(link.guardian_id);
+                    const player = profileById.get(link.player_id);
+                    return (
+                      <TableRow key={`${link.guardian_id}-${link.player_id}`}>
+                        <TableCell className="font-medium">
+                          {guardian?.full_name ?? guardian?.email ?? "Unknown"}
+                        </TableCell>
+                        <TableCell>{player?.full_name ?? player?.email ?? "Unknown"}</TableCell>
+                        <TableCell>
+                          <form
+                            action={unlinkGuardianAction.bind(null, link.guardian_id, link.player_id)}
+                            className="flex justify-end"
+                          >
+                            <Button type="submit" size="sm" variant="ghost">
+                              Unlink
+                            </Button>
+                          </form>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </div>
           )}
         </CardContent>
       </Card>

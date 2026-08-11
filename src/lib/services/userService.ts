@@ -29,6 +29,26 @@ export async function listAllProfiles(supabase: Client): Promise<Profile[]> {
   return data;
 }
 
+export interface Page<T> {
+  items: T[];
+  hasMore: boolean;
+}
+
+export async function listAllProfilesPage(
+  supabase: Client,
+  { limit = 10, offset = 0, search = "" }: { limit?: number; offset?: number; search?: string } = {},
+): Promise<Page<Profile>> {
+  let query = supabase.from("profiles").select("*").order("created_at", { ascending: false });
+  // Strip characters that are syntactically meaningful to PostgREST's .or() filter list.
+  const q = search.trim().replace(/[,()]/g, "");
+  if (q) {
+    query = query.or(`full_name.ilike.%${q}%,email.ilike.%${q}%`);
+  }
+  const { data, error } = await query.range(offset, offset + limit);
+  if (error) throw error;
+  return { items: data.slice(0, limit), hasMore: data.length > limit };
+}
+
 export async function listPendingProfiles(supabase: Client): Promise<Profile[]> {
   const { data, error } = await supabase
     .from("profiles")

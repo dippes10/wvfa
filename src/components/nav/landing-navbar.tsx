@@ -60,7 +60,7 @@ export function LandingNavbar() {
         <div className="flex items-center gap-2">
           <ThemeToggle />
           <Link href="/login" className={buttonVariants({ size: "sm", className: "rounded-full" })}>
-            Get started
+            Join the Academy
           </Link>
         </div>
       </div>
