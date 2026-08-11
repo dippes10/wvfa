@@ -9,7 +9,10 @@ export function BrandMark({ className, iconClassName }: { className?: string; ic
         className,
       )}
     >
-      <Shield className={cn("fill-black/10 text-black", iconClassName)} strokeWidth={2.25} />
+      <Shield
+        className={cn("fill-primary-foreground/10 text-primary-foreground", iconClassName)}
+        strokeWidth={2.25}
+      />
     </span>
   );
 }

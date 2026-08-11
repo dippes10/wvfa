@@ -222,8 +222,8 @@ function Marker({
         >
           <div
             className={cn(
-              "cursor-pointer overflow-hidden rounded-full bg-neutral-900 shadow-lg transition-transform duration-200",
-              hovered && "scale-125 shadow-xl ring-1 ring-white/50",
+              "cursor-pointer overflow-hidden rounded-full bg-primary shadow-lg transition-transform duration-200",
+              hovered && "scale-125 shadow-xl ring-1 ring-background/50",
             )}
             style={{
               width: "8px",
@@ -470,7 +470,7 @@ function LoadingFallback() {
   return (
     <Html center>
       <div className="flex shrink-0 flex-col items-center gap-3">
-        <span className="inline-block shrink-0 text-sm text-neutral-400">
+        <span className="inline-block shrink-0 text-sm text-muted-foreground">
           Loading globe...
         </span>
       </div>
