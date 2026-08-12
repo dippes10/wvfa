@@ -10,9 +10,10 @@ import { BrandMark } from "@/components/fx/brand-mark";
 
 const LINKS = [
   { href: "#platform", label: "Platform" },
+  { href: "#how-it-works", label: "How it works" },
   { href: "#gallery", label: "Gallery" },
   { href: "#testimonials", label: "Testimonials" },
-  { href: "#coverage", label: "Coverage" },
+  { href: "#faq", label: "FAQ" },
 ];
 
 export function LandingNavbar() {

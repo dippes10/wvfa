@@ -62,6 +62,15 @@ export interface Page<T> {
   hasMore: boolean;
 }
 
+export async function countSleepEntries(supabase: Client, playerId: string): Promise<number> {
+  const { count, error } = await supabase
+    .from("sleep_entries")
+    .select("*", { count: "exact", head: true })
+    .eq("player_id", playerId);
+  if (error) throw error;
+  return count ?? 0;
+}
+
 /** Paginated full history for one player (no date-window cutoff), newest first. */
 export async function listSleepEntriesHistoryPage(
   supabase: Client,

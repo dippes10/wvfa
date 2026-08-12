@@ -1,18 +1,24 @@
 import Link from "next/link";
 import { BrandMark } from "@/components/fx/brand-mark";
 
-const LINKS = [
+const PLATFORM_LINKS = [
   { href: "#platform", label: "Platform" },
+  { href: "#how-it-works", label: "How it works" },
+  { href: "#why-wvfa", label: "Why WVFA" },
+];
+
+const COMMUNITY_LINKS = [
   { href: "#gallery", label: "Gallery" },
   { href: "#testimonials", label: "Testimonials" },
   { href: "#coverage", label: "Coverage" },
+  { href: "#faq", label: "FAQ" },
 ];
 
 export function LandingFooter() {
   return (
     <footer className="border-t border-border">
       <div className="mx-auto max-w-5xl px-6 py-14">
-        <div className="grid gap-10 sm:grid-cols-3">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-3">
             <Link href="/" className="flex items-center gap-2 font-bold">
               <BrandMark className="size-8" iconClassName="size-4" />
@@ -26,10 +32,25 @@ export function LandingFooter() {
 
           <div>
             <p className="text-xs font-semibold tracking-widest text-muted-foreground uppercase">
-              Explore
+              Platform
             </p>
             <ul className="mt-3 space-y-2 text-sm">
-              {LINKS.map((link) => (
+              {PLATFORM_LINKS.map((link) => (
+                <li key={link.href}>
+                  <a href={link.href} className="text-muted-foreground hover:text-foreground">
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <p className="text-xs font-semibold tracking-widest text-muted-foreground uppercase">
+              Community
+            </p>
+            <ul className="mt-3 space-y-2 text-sm">
+              {COMMUNITY_LINKS.map((link) => (
                 <li key={link.href}>
                   <a href={link.href} className="text-muted-foreground hover:text-foreground">
                     {link.label}
@@ -47,6 +68,11 @@ export function LandingFooter() {
               <li>
                 <Link href="/login" className="text-muted-foreground hover:text-foreground">
                   Sign in
+                </Link>
+              </li>
+              <li>
+                <Link href="/login" className="text-muted-foreground hover:text-foreground">
+                  Join the Academy
                 </Link>
               </li>
             </ul>

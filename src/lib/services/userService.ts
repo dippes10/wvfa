@@ -113,6 +113,15 @@ export async function listGuardianLinks(supabase: Client): Promise<GuardianLink[
   return data;
 }
 
+export async function listGuardianIdsForPlayer(supabase: Client, playerId: string): Promise<string[]> {
+  const { data, error } = await supabase
+    .from("guardians_players")
+    .select("guardian_id")
+    .eq("player_id", playerId);
+  if (error) throw error;
+  return data.map((row) => row.guardian_id);
+}
+
 export async function listLinkedPlayerIds(supabase: Client, guardianId: string): Promise<string[]> {
   const { data, error } = await supabase
     .from("guardians_players")
