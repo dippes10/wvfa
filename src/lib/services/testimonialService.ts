@@ -77,3 +77,22 @@ export async function deleteTestimonial(supabase: Client, id: string) {
   const { error } = await supabase.from("testimonials").delete().eq("id", id);
   if (error) throw error;
 }
+
+export interface Page<T> {
+  items: T[];
+  hasMore: boolean;
+}
+
+export async function listReviewedTestimonialsPage(
+  supabase: Client,
+  { limit = 10, offset = 0 }: { limit?: number; offset?: number } = {},
+): Promise<Page<Testimonial>> {
+  const { data, error } = await supabase
+    .from("testimonials")
+    .select("*")
+    .in("status", ["approved", "rejected"])
+    .order("reviewed_at", { ascending: false })
+    .range(offset, offset + limit);
+  if (error) throw error;
+  return { items: data.slice(0, limit), hasMore: data.length > limit };
+}
