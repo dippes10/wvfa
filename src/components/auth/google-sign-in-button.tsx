@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { LAST_ACTIVITY_STORAGE_KEY } from "@/lib/session/idle-config";
 import { Button } from "@/components/ui/button";
 
 export function GoogleSignInButton() {
@@ -9,6 +10,13 @@ export function GoogleSignInButton() {
 
   async function handleSignIn() {
     setLoading(true);
+    // A stale idle-timestamp from a previous session must not immediately
+    // trip the idle guard the moment this new session lands on a protected page.
+    try {
+      localStorage.removeItem(LAST_ACTIVITY_STORAGE_KEY);
+    } catch {
+      // ignore
+    }
     const supabase = createClient();
     await supabase.auth.signInWithOAuth({
       provider: "google",

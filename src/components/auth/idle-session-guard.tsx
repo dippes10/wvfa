@@ -35,6 +35,11 @@ export function IdleSessionGuard() {
     signingOutRef.current = true;
     const supabase = createClient();
     await supabase.auth.signOut();
+    try {
+      localStorage.removeItem(LAST_ACTIVITY_STORAGE_KEY);
+    } catch {
+      // ignore
+    }
     router.push("/login?reason=timeout");
     router.refresh();
   }, [router]);

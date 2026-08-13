@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { LAST_ACTIVITY_STORAGE_KEY } from "@/lib/session/idle-config";
 import { Button } from "@/components/ui/button";
 
 export function SignOutButton({ className }: { className?: string }) {
@@ -10,6 +11,11 @@ export function SignOutButton({ className }: { className?: string }) {
   async function handleSignOut() {
     const supabase = createClient();
     await supabase.auth.signOut();
+    try {
+      localStorage.removeItem(LAST_ACTIVITY_STORAGE_KEY);
+    } catch {
+      // ignore
+    }
     router.push("/");
     router.refresh();
   }
